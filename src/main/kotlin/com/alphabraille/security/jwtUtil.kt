@@ -29,25 +29,26 @@ class JwtUtil {
                 .parseClaimsJws(token)
             true
         } catch (e: Exception) {
+            println("Error al validar el token: ${e.message}") // Imprimir el error
             false
         }
     }
 
-    fun extractUsername(token: String): String {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .body
-            .subject
+    fun extractUsername(token: String): String? {
+        return try {
+            Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .body
+                .subject
+        } catch (e: Exception) {
+            println("Error al extraer el nombre de usuario: ${e.message}")
+            null
+        }
     }
 
-    fun getUsernameFromToken(token: String): String {
-        return Jwts.parserBuilder()
-            .setSigningKey(key)
-            .build()
-            .parseClaimsJws(token)
-            .body
-            .subject
+    fun getUsernameFromToken(token: String): String? {
+        return extractUsername(token) // Reutiliza el método extractUsername
     }
 }

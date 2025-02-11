@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/auth")
 class AuthController(
     private val userService: UserService,
-    private val JwtUtil: JwtUtil
+    private val jwtUtil: JwtUtil  // Corregido aquí
 ) {
     data class AuthRequest(val username: String, val password: String)
     data class AuthResponse(val token: String)
@@ -16,8 +16,9 @@ class AuthController(
     @PostMapping("/login")
     fun login(@RequestBody request: AuthRequest): AuthResponse {
         val user = userService.authenticate(request.username, request.password)
-        val token = JwtUtil.generateToken(user?.username ?: "")
+            ?: throw RuntimeException("Credenciales inválidas")
+
+        val token = jwtUtil.generateToken(user.username)
         return AuthResponse(token)
     }
-
 }
